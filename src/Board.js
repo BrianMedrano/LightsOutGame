@@ -15,16 +15,6 @@ import "./Board.css";
  * - hasWon: boolean, true when board is all off
  * - board: array-of-arrays of true/false
  *
- *    For this board:
- *       .  .  .
- *       O  O  .     (where . is off, and O is on)
- *       .  .  .
- *
- *    This would be: [[f, f, f], [t, t, f], [f, f, f]]
- *
- *  This should render an HTML table of individual <Cell /> components.
- *
- *  This doesn't handle any clicks --- clicks are on individual cells
  *
  **/
 
@@ -32,7 +22,7 @@ class Board extends Component {
   static defaultProps = {
     nRows: 5,
     nCols: 5,
-    chanceLightStartsOn: 0.25,
+    chanceLightStartsOn: 0.25, //constant that determines amount of lit cells at render
   };
 
   constructor(props) {
@@ -53,7 +43,7 @@ class Board extends Component {
     for (let i = 0; i < this.props.nRows; i++) {
       innerArray = [];
       for (let j = 0; j < this.props.nCols; j++) {
-        //randomly pushing true or false into the array
+        //randomly pushes true or false into the array
         innerArray.push(Math.random() < this.props.chanceLightStartsOn);
       }
       boardArray[i] = innerArray;
@@ -80,7 +70,7 @@ class Board extends Component {
     //flips cell clicked
     flipCell(y, x);
 
-    //flip the cells around it
+    //flip the cells directly next to selected tile
 
     flipCell(y - 1, x);
     flipCell(y + 1, x);
@@ -88,7 +78,6 @@ class Board extends Component {
     flipCell(y, x + 1);
 
     // win when every cell is turned off
-    // TODO: determine is the game has been won
     let hasWon = false;
     let unlitCells = 0;
     for (let a = 0; a < nRows; a++) {
@@ -99,6 +88,7 @@ class Board extends Component {
       }
     }
     console.log(unlitCells);
+    //All cells off?
     if (unlitCells === this.props.nCols * this.props.nRows) {
       hasWon = true;
     }
@@ -121,8 +111,6 @@ class Board extends Component {
   render() {
     // if the game is won, just show a winning msg & render nothing else
 
-    // TODO
-
     // make table board
     let tblBoard = [];
     for (let y = 0; y < this.props.nRows; y++) {
@@ -142,19 +130,21 @@ class Board extends Component {
     }
 
     const instructions = (
-      <h2 className="instructions">Instructions: <br/>
+      <h2 className="instructions">
+        Instructions: <br />
         Select a box to switch it. <br />
         Surrounding boxes will also switch. <br />
         Switch all the boxes off to win!
       </h2>
     );
+
     return (
       <div className="Board">
         <div className="Sign">
           <span className="fast-flicker">Li</span>ghts
           <span className="flicker"> O</span>ut
         </div>
-
+        
         {!this.state.hasWon ? (
           <div className="Board-boxes">
             <table>
